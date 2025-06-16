@@ -466,3 +466,40 @@ class Board:
 
         #Kings
         self.squares[row_other][4] = Square(row_other, 4, King(color))
+
+    def get_fen(self, turn: str = 'w', castling: str = 'KQkq', en_passant: str = '-', halfmove: int = 0, fullmove: int = 1) -> str:
+        """
+        Export the current board state as a FEN string.
+        Args:
+            turn: 'w' or 'b' for side to move.
+            castling: Castling rights, e.g. 'KQkq'.
+            en_passant: En passant target square, e.g. 'e3' or '-'.
+            halfmove: Halfmove clock for the fifty-move rule.
+            fullmove: Fullmove number.
+        Returns:
+            FEN string representing the current board.
+        """
+        piece_to_char = {
+            'white': {'King': 'K', 'Queen': 'Q', 'Rook': 'R', 'Bishop': 'B', 'Knight': 'N', 'Pawn': 'P'},
+            'black': {'King': 'k', 'Queen': 'q', 'Rook': 'r', 'Bishop': 'b', 'Knight': 'n', 'Pawn': 'p'},
+        }
+        fen_rows = []
+        for row in self.squares:
+            empty = 0
+            fen_row = ''
+            for square in row:
+                piece = square.piece
+                if piece is None:
+                    empty += 1
+                else:
+                    if empty > 0:
+                        fen_row += str(empty)
+                        empty = 0
+                    name = type(piece).__name__
+                    color = piece.color
+                    fen_row += piece_to_char[color][name]
+            if empty > 0:
+                fen_row += str(empty)
+            fen_rows.append(fen_row)
+        fen_board = '/'.join(fen_rows)
+        return f"{fen_board} {turn} {castling} {en_passant} {halfmove} {fullmove}"
