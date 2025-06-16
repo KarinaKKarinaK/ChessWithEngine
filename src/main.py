@@ -5,6 +5,7 @@ from const import *
 from game import Game
 from square import Square
 from move import Move
+from engine import sync_engine_with_board, get_best_move, play_move
 
 class Main:
 
@@ -76,35 +77,34 @@ class Main:
                 
                 # Click release
                 elif event.type == pygame.MOUSEBUTTONUP:
-
                     if dragger.dragging:
                         dragger.update_mouse(event.pos)
-
                         released_row = dragger.mouseY // SQSIZE
                         released_col = dragger.mouseX // SQSIZE
 
-                        # create possible move
                         initial = Square(dragger.initial_row, dragger.initial_col)
                         final = Square(released_row, released_col)
                         move = Move(initial, final)
 
                         if board.valid_move(dragger.piece, move):
-                            # Normal capture
                             captured = board.squares[released_row][released_col].has_piece()
                             board.move(dragger.piece, move)
-
                             board.set_true_en_pessant(dragger.piece)
-
-                            # Sounds
                             game.play_sound(captured)
-                            # Show methods
                             game.show_bg(screen)
                             game.show_last_move(screen)
                             game.show_pieces(screen)
-                            
-
-                            # Next turn
                             game.next_turn()
+
+                            # --- ENGINE TURN ---
+                            # Sync Stockfish with the new board state
+                            sync_engine_with_board(board, turn=game.next_player[0])
+                            # If it's the computer's turn, get and play the engine move
+                            if game.next_player == "black":  # or "white" if you want engine as white
+                                engine_move = get_best_move()
+                                if engine_move:
+                                    play_move(engine_move, board)
+                                    game.next_turn()
 
                     dragger.undrag_piece()
                 

@@ -4,6 +4,7 @@ from board import Board
 from dragger import Dragger
 from config import Config
 from square import Square
+from engine import sync_engine_with_board, get_best_move, play_move
 
 class Game:
 
