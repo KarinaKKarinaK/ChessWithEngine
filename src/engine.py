@@ -1,7 +1,7 @@
 from stockfish import Stockfish
 from board import Board
 
-stockfish = Stockfish(path="../stockfish/stockfish-macos-m1-apple-silicon", depth=18, parameters={"Threads": 2, "Minimum Thinking Time": 30})
+stockfish = Stockfish(path="/Users/karina/Documents/Python/ChessWithEngine/stockfish/stockfish-macos-m1-apple-silicon", depth=18, parameters={"Threads": 2, "Minimum Thinking Time": 300})
 stockfish.set_skill_level(15)
 
 board = Board()
